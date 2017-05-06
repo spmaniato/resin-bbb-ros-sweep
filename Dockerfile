@@ -17,7 +17,6 @@ RUN apt-get -q update \
     locales locales-all \
     python-dev python-pip \
     python-rosdep python-catkin-tools \
-    ros-${ROS_DISTRO}-ros-base \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN locale-gen en_US.UTF-8
@@ -31,6 +30,6 @@ WORKDIR /usr/src/app
 
 RUN ls -lah
 
-ENTRYPOINT ["./entrypoint.sh"]
+# ENTRYPOINT ["./entrypoint.sh"]
 
-CMD ["roscore"]
+CMD ["echo", "Hello Spyros :-)"]
