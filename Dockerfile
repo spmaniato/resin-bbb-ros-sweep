@@ -1,35 +1,55 @@
 FROM resin/beaglebone-black-buildpack-deps:jessie
 
-#switch on systemd init system in container
+# Switch on systemd init system in container and set various other variables
 ENV INITSYSTEM="on" \
     TERM="xterm" \
-    LANG="en_US.UTF-8" \
-    ROS_DISTRO="indigo"
+    PYTHONIOENCODING="UTF-8"
 
-# Setup apt keys
-RUN apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
+# Variables for ROS distribution, configuration, and installation
+ENV ROS_DISTRO="indigo" \
+    ROS_CONFIG="ros_comm"
+ENV ROS_INSTALL_DIR="/opt/ros/${ROS_DISTRO}" \
+    ROS_LANG_DISABLE="genlisp"
 
-# Add apt sources
-RUN echo "deb http://packages.ros.org/ros/ubuntu trusty main" > /etc/apt/sources.list.d/ros-latest.list
-
-RUN apt-get -q update \
+RUN apt-get -qq update \
   && apt-get install -yq --no-install-recommends \
-    locales locales-all \
-    python-dev python-pip \
-    python-rosdep python-catkin-tools \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+    python-dev python-pip
 
-RUN locale-gen en_US.UTF-8
+# Install ROS-related Python tools
+COPY ./requirements.txt .
+RUN pip install -r requirements.txt
 
 RUN rosdep init \
     && rosdep update
+
+RUN mkdir -p /usr/src/catkin_ws/src ${ROS_INSTALL_DIR}
+
+WORKDIR /usr/src/catkin_ws
+
+RUN rosinstall_generator ${ROS_CONFIG} --rosdistro ${ROS_DISTRO} \
+    --deps --tar > .rosinstall \
+    && wstool init src .rosinstall \
+    && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
+       --skip-keys python-rosdep \
+       --skip-keys python-rospkg \
+       --skip-keys python-catkin-pkg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN catkin init \
+    && catkin config --install --install-space ${ROS_INSTALL_DIR} \
+       --cmake-args -DCMAKE_BUILD_TYPE=Release \
+    && catkin build --no-status --no-summary --no-notify \
+    && catkin clean -y --logs --build --devel \
+    && rm -rf src/*
 
 COPY . /usr/src/app
 
 WORKDIR /usr/src/app
 
-RUN ls -lah
+# Debugging .dockerignore
+RUN cat .dockerignore && ls -lah
 
-# ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
 
-CMD ["echo", "Hello Spyros :-)"]
+CMD ["roscore"]
