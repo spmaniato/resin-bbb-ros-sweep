@@ -9,5 +9,7 @@ before_install:
 
 # Run static code analysis and tests
 script:
-  - docker run -it --rm -v ${PWD}:/scripts:ro koalaman/shellcheck /scripts/*.sh
+  - docker run -it --rm -v ${PWD}:/scripts:ro koalaman/shellcheck /scripts/entrypoint.sh
   - docker run -it --rm -v "${PWD}/Dockerfile":/Dockerfile:ro redcoolbeans/dockerlint
+  # TODO: Only deploy if not pull request and branch is master
+  # - git push resin master
