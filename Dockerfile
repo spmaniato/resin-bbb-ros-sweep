@@ -6,8 +6,6 @@ ENV INITSYSTEM="on" \
     LANG="en_US.UTF-8" \
     ROS_DISTRO="indigo"
 
-RUN locale-gen en_US.UTF-8
-
 # Setup apt keys
 RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
 
@@ -21,6 +19,8 @@ RUN apt-get -qq update \
     python-rosdep python-catkin-tools \
     ros-${ROS_DISTRO}-ros-base \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN locale-gen en_US.UTF-8
 
 RUN rosdep init \
     && rosdep update
