@@ -3,6 +3,11 @@ sudo: required
 services:
   - docker
 
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
 before_install:
   - docker pull koalaman/shellcheck
   - docker pull redcoolbeans/dockerlint
