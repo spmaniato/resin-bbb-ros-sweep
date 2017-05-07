@@ -12,7 +12,8 @@ ENV ROS_INSTALL_DIR="/opt/ros/${ROS_DISTRO}"
 
 RUN apt-get -qq update \
   && apt-get install -yq --no-install-recommends \
-    python-dev python-pip
+    python-dev python-pip \
+    libpcl-dev libpcl1.7
 
 # Install ROS-related Python tools
 COPY ./requirements.txt .
