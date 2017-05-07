@@ -42,6 +42,18 @@ RUN catkin init \
     && catkin clean -y --logs --build --devel \
     && rm -rf src/*
 
+WORKDIR /usr/src
+
+# Setting -DDUMMY=On is a temporary workaround due to a linking error
+RUN git clone https://github.com/scanse/sweep-sdk.git \
+  && cd sweep-sdk/libsweep \
+  && mkdir -p build && cd build \
+  && cmake .. -DCMAKE_BUILD_TYPE=Release -DDUMMY=On \
+  && cmake --build . \
+  && cmake --build . --target install \
+  && ldconfig \
+  && cd /usr/src && rm -rf sweep-sdk
+
 COPY . /usr/src/app
 
 WORKDIR /usr/src/app
