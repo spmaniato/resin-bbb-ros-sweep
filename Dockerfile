@@ -8,8 +8,7 @@ ENV INITSYSTEM="on" \
 # Variables for ROS distribution, configuration, and installation
 ENV ROS_DISTRO="indigo" \
     ROS_CONFIG="ros_comm"
-ENV ROS_INSTALL_DIR="/opt/ros/${ROS_DISTRO}" \
-    ROS_LANG_DISABLE="genlisp"
+ENV ROS_INSTALL_DIR="/opt/ros/${ROS_DISTRO}"
 
 RUN apt-get -qq update \
   && apt-get install -yq --no-install-recommends \
@@ -17,7 +16,7 @@ RUN apt-get -qq update \
 
 # Install ROS-related Python tools
 COPY ./requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -q -r requirements.txt
 
 RUN rosdep init \
     && rosdep update
