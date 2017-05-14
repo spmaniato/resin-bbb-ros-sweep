@@ -7,7 +7,8 @@ ENV INITSYSTEM="on" \
 
 # Variables for ROS distribution, configuration, and installation
 ENV ROS_DISTRO="indigo" \
-    ROS_CONFIG="ros_comm"
+    ROS_CONFIG="ros_comm" \
+    ROS_EXTRA_PACKAGES="sensor_msgs pcl_conversions pointcloud_to_laserscan"
 ENV ROS_INSTALL_DIR="/opt/ros/${ROS_DISTRO}"
 
 RUN apt-get -qq update \
@@ -26,8 +27,8 @@ RUN mkdir -p /usr/src/catkin_ws/src ${ROS_INSTALL_DIR}
 
 WORKDIR /usr/src/catkin_ws
 
-RUN rosinstall_generator ${ROS_CONFIG} --rosdistro ${ROS_DISTRO} \
-    --deps --tar > .rosinstall \
+RUN rosinstall_generator ${ROS_CONFIG} ${ROS_EXTRA_PACKAGES} \
+    --rosdistro ${ROS_DISTRO} --deps --tar > .rosinstall \
     && wstool init src .rosinstall \
     && rosdep install --from-paths src --ignore-src --rosdistro ${ROS_DISTRO} -y \
        --skip-keys python-rosdep \
