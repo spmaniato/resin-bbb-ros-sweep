@@ -48,7 +48,7 @@ WORKDIR /usr/src
 # Clone, build, and install the Sweep C++ SDK
 RUN git clone https://github.com/spmaniato/sweep-sdk.git \
       -b dashes_to_underscores \
-      sweep_sdk
+      sweep_sdk \
   && cd sweep_sdk/libsweep \
   && mkdir -p build && cd build \
   && cmake .. -DCMAKE_BUILD_TYPE=Release \
