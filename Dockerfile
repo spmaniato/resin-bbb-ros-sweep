@@ -60,11 +60,8 @@ RUN git clone https://github.com/spmaniato/sweep-sdk.git \
 WORKDIR /usr/src/sweep_ws
 
 # Clone and build Sweep ROS plus some additional ROS packages it depends on
-# NOTE: For now, clone my bugfix branch (missing dependencies)
-#       Also, build with catkin_make because they modify CMake variables.
-RUN git clone https://github.com/spmaniato/sweep-ros.git \
-      -b fix_dependencies \
-      src/sweep_ros \
+# NOTE: Build with catkin_make here because they modify CMake variables ...
+RUN git clone https://github.com/scanse/sweep-ros.git src/sweep_ros \
   && /bin/bash -c "source ${ROS_INSTALL_DIR}/setup.bash && \
                    catkin_make -DCMAKE_BUILD_TYPE=Release"
 
