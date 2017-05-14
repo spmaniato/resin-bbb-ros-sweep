@@ -46,14 +46,16 @@ RUN rosinstall_generator ${ROS_CONFIG} ${ROS_EXTRA_PACKAGES} \
 WORKDIR /usr/src
 
 # Clone, build, and install the Sweep C++ SDK
-RUN git clone https://github.com/scanse/sweep-sdk.git \
-  && cd sweep-sdk/libsweep \
+RUN git clone https://github.com/spmaniato/sweep-sdk.git \
+      -b dashes_to_underscores \
+      sweep_sdk
+  && cd sweep_sdk/libsweep \
   && mkdir -p build && cd build \
   && cmake .. -DCMAKE_BUILD_TYPE=Release \
   && cmake --build . \
   && cmake --build . --target install \
   && ldconfig \
-  && cd /usr/src && rm -rf sweep-sdk
+  && cd /usr/src && rm -rf sweep_sdk
 
 WORKDIR /usr/src/sweep_ws
 
