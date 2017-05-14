@@ -55,6 +55,16 @@ RUN git clone https://github.com/scanse/sweep-sdk.git \
   && ldconfig \
   && cd /usr/src && rm -rf sweep-sdk
 
+WORKDIR /usr/src/sweep_ws
+
+# Clone and build Sweep ROS plus some additional ROS packages it depends on
+RUN mkdir -p src/sweep_ros \
+  && git clone https://github.com/scanse/sweep-ros.git src/sweep_ros \
+  && /bin/bash -c "source ${ROS_INSTALL_DIR}/setup.bash \
+                    && catkin init \
+                    && catkin config --cmake-args -DCMAKE_BUILD_TYPE=Release \
+                    && catkin build --no-status --no-summary --no-notify"
+
 COPY . /usr/src/app
 
 WORKDIR /usr/src/app
