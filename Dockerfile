@@ -46,11 +46,11 @@ RUN catkin init \
 
 WORKDIR /usr/src
 
-# Setting -DDUMMY=On is a temporary workaround due to a linking error
+# Clone, build, and install the Sweep C++ SDK
 RUN git clone https://github.com/scanse/sweep-sdk.git \
   && cd sweep-sdk/libsweep \
   && mkdir -p build && cd build \
-  && cmake .. -DCMAKE_BUILD_TYPE=Release -DDUMMY=On \
+  && cmake .. -DCMAKE_BUILD_TYPE=Release \
   && cmake --build . \
   && cmake --build . --target install \
   && ldconfig \
