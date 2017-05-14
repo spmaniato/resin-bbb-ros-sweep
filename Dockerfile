@@ -23,9 +23,9 @@ RUN pip install -q -r requirements.txt
 RUN rosdep init \
     && rosdep update
 
-RUN mkdir -p /usr/src/catkin_ws/src ${ROS_INSTALL_DIR}
+RUN mkdir -p /usr/src/ros_${ROS_DISTRO}_ws/src ${ROS_INSTALL_DIR}
 
-WORKDIR /usr/src/catkin_ws
+WORKDIR /usr/src/ros_${ROS_DISTRO}_ws
 
 RUN rosinstall_generator ${ROS_CONFIG} ${ROS_EXTRA_PACKAGES} \
     --rosdistro ${ROS_DISTRO} --deps --tar > .rosinstall \
@@ -35,9 +35,8 @@ RUN rosinstall_generator ${ROS_CONFIG} ${ROS_EXTRA_PACKAGES} \
        --skip-keys python-rospkg \
        --skip-keys python-catkin-pkg \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN catkin init \
+    && rm -rf /var/lib/apt/lists/* \
+    && catkin init \
     && catkin config --install --install-space ${ROS_INSTALL_DIR} \
        --cmake-args -DCMAKE_BUILD_TYPE=Release \
     && catkin build --no-status --no-summary --no-notify \
